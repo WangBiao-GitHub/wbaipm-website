@@ -1,0 +1,17 @@
+{
+  "name": "remote-assist-server",
+  "version": "1.0.0",
+  "description": "远程协助系统信令服务器",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "ws": "^8.17.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

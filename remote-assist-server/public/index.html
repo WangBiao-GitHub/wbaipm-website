@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>远程协助 - 网页测试客户端</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; }
+
+h1 { text-align: center; padding: 18px; background: #1976D2; color: #fff; font-size: 18px; }
+
+.container { display: flex; gap: 16px; padding: 16px; max-width: 1100px; margin: 0 auto; }
+
+.panel {
+  flex: 1; background: #fff; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12); overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.panel-header {
+  padding: 12px 16px; font-weight: bold; font-size: 15px; color: #fff;
+}
+.help-header { background: #1976D2; }
+.assist-header { background: #388E3C; }
+
+.panel-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+.log {
+  height: 180px; overflow-y: auto; background: #111; color: #0f0;
+  font-family: monospace; font-size: 12px; padding: 8px; border-radius: 6px;
+  line-height: 1.5;
+}
+.log .err { color: #f55; }
+.log .info { color: #aef; }
+.log .send { color: #ff0; }
+
+.video-wrap {
+  position: relative; background: #000; border-radius: 6px; overflow: hidden;
+  min-height: 200px; display: flex; align-items: center; justify-content: center;
+}
+.video-wrap video { width: 100%; max-height: 300px; display: block; }
+.video-wrap .no-video { color: #555; font-size: 13px; }
+
+.highlight-dot {
+  position: absolute; width: 60px; height: 60px;
+  border: 4px solid #FF5722; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: none; pointer-events: none;
+  animation: pulse 0.6s ease-in-out infinite alternate;
+}
+@keyframes pulse { from { transform: translate(-50%,-50%) scale(0.8); opacity: 1; } to { transform: translate(-50%,-50%) scale(1.2); opacity: 0.5; } }
+
+input[type=text], input[type=number] {
+  width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;
+  font-size: 15px; outline: none;
+}
+input:focus { border-color: #1976D2; }
+
+button {
+  padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 14px; font-weight: 500; transition: opacity 0.15s;
+}
+button:hover { opacity: 0.85; }
+button:disabled { opacity: 0.4; cursor: default; }
+.btn-blue { background: #1976D2; color: #fff; }
+.btn-green { background: #388E3C; color: #fff; }
+.btn-red { background: #D32F2F; color: #fff; }
+.btn-gray { background: #757575; color: #fff; }
+.btn-orange { background: #F57C00; color: #fff; }
+
+.row { display: flex; gap: 8px; align-items: center; }
+.row > * { flex: 1; }
+.row > button { flex: 0 0 auto; }
+
+.code-display {
+  font-size: 42px; font-weight: bold; letter-spacing: 10px; color: #1976D2;
+  text-align: center; padding: 10px; background: #E3F2FD; border-radius: 8px;
+}
+.countdown { text-align: center; color: #888; font-size: 13px; margin-top: 4px; }
+
+.status-bar {
+  padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  text-align: center;
+}
+.status-idle { background: #eee; color: #666; }
+.status-connected { background: #E8F5E9; color: #2E7D32; }
+.status-controlled { background: #FFEBEE; color: #C62828; }
+.status-connecting { background: #FFF3E0; color: #E65100; }
+
+.section-title { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+
+.touch-area {
+  position: relative; cursor: crosshair;
+  user-select: none;
+}
+</style>
+</head>
+<body>
+<h1>🖥️ 远程协助 — 网页功能测试</h1>
+<p style="text-align:center;color:#888;font-size:13px;padding:6px 0">
+  在两个标签页分别打开此页，一个选"求助端"，另一个选"协助端"，验证完整流程
+</p>
+
+<div class="container">
+  <!-- ===== 求助端 ===== -->
+  <div class="panel">
+    <div class="panel-header help-header">📱 求助端（被协助方）</div>
+    <div class="panel-body">
+
+      <div class="status-bar status-idle" id="helpStatus">未连接</div>
+
+      <div id="helpWaiting">
+        <button class="btn-blue" onclick="helpRequestCode()" id="btnRequestCode">点击求助 → 获取配对码</button>
+        <div class="code-display" id="helpCode">- - - -</div>
+        <div class="countdown" id="helpCountdown"></div>
+      </div>
+
+      <div id="helpConnected" style="display:none">
+        <!-- 模拟屏幕区域：协助端点击此处会出现高亮 -->
+        <div class="section-title">📺 模拟屏幕（协助端可在此高亮指引）</div>
+        <div class="video-wrap touch-area" id="helpScreen" style="min-height:200px;background:linear-gradient(135deg,#1a237e,#283593)">
+          <div class="no-video" style="color:#aaa;font-size:14px;text-align:center;padding:20px">
+            📱 求助端屏幕区域<br><small style="color:#777">协助端点击时此处会出现高亮圆圈</small>
+          </div>
+          <div class="highlight-dot" id="helpHighlight"></div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div class="status-bar status-connected" id="helpModeBar">🟢 指引模式中</div>
+          <button class="btn-red" id="btnRevokeControl" onclick="helpRevokeControl()" style="display:none">收回控制</button>
+          <button class="btn-gray" onclick="helpEndSession()">结束</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title" style="margin-bottom:4px">📋 消息日志</div>
+        <div class="log" id="helpLog"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 协助端 ===== -->
+  <div class="panel">
+    <div class="panel-header assist-header">💻 协助端（提供协助方）</div>
+    <div class="panel-body">
+
+      <div class="status-bar status-idle" id="assistStatus">未连接</div>
+
+      <div id="assistInput">
+        <div class="section-title" style="margin-bottom:6px">输入求助端的 4 位配对码</div>
+        <div class="row">
+          <input type="text" id="codeInput" maxlength="4" placeholder="例如：1234" oninput="this.value=this.value.replace(/\D/g,'')">
+          <button class="btn-green" onclick="assistConnect()" id="btnAssistConnect">连接</button>
+        </div>
+        <div style="color:#f44;font-size:12px;margin-top:4px" id="assistError"></div>
+      </div>
+
+      <div id="assistSession" style="display:none">
+        <!-- 远端视频（若有）/ 控制区 -->
+        <div class="section-title">📺 求助端画面（WebRTC）</div>
+        <div class="video-wrap touch-area" id="assistVideoWrap" style="min-height:200px">
+          <video id="assistVideo" autoplay playsinline muted style="display:none"></video>
+          <div class="no-video" id="assistNoVideo">等待视频流...</div>
+          <!-- 协助端在此区域点击，发送高亮/控制指令 -->
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div style="flex:1">
+            <div id="assistModeBar" class="status-bar status-connected">指引模式</div>
+          </div>
+          <button class="btn-blue" id="btnRequestControl" onclick="assistRequestControl()">请求控制</button>
+          <button class="btn-red" id="btnStopControl" onclick="assistStopControl()" style="display:none">停止控制</button>
+          <button class="btn-gray" onclick="assistEndSession()">挂断</button>
+        </div>
+
+        <!-- 测试用：模拟发送指令 -->
+        <div class="section-title" style="margin-top:8px;margin-bottom:4px">🎮 手动发送控制指令（测试）</div>
+        <div class="row">
+          <button class="btn-orange" onclick="assistSendHighlight()">发高亮 (0.5, 0.3)</button>
+          <button class="btn-orange" onclick="assistSendTap()">发点击 (0.5, 0.5)</button>
+          <button class="btn-orange" onclick="assistSendSwipe()">发滑动</button>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <input type="text" id="inputText" placeholder="要输入的文字">
+          <button class="btn-orange" onclick="assistSendInput()">发文字</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title" style="margin-bottom:4px">📋 消息日志</div>
+        <div class="log" id="assistLog"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 工具 ====================
+const WS_URL = `ws://${location.host}`
+
+function log(id, msg, cls='') {
+  const el = document.getElementById(id)
+  const t = new Date().toLocaleTimeString()
+  el.innerHTML += `<div class="${cls}">[${t}] ${msg}</div>`
+  el.scrollTop = el.scrollHeight
+}
+function hLog(msg, cls) { log('helpLog', msg, cls) }
+function aLog(msg, cls) { log('assistLog', msg, cls) }
+
+// ==================== 求助端 ====================
+let helpWs = null
+let helpRoomId = null
+let helpPc = null
+let helpTimer = null
+let helpIsControlled = false
+
+function helpConnect() {
+  helpWs = new WebSocket(WS_URL)
+  helpWs.onopen = () => {
+    hLog('WebSocket 已连接', 'info')
+    document.getElementById('helpStatus').textContent = '🔌 WebSocket 已连接'
+    document.getElementById('helpStatus').className = 'status-bar status-connecting'
+  }
+  helpWs.onmessage = e => {
+    const msg = JSON.parse(e.data)
+    hLog(`← ${msg.type} ${msg.payload ? JSON.stringify(msg.payload).slice(0,60) : ''}`, 'info')
+    handleHelpMsg(msg)
+  }
+  helpWs.onclose = () => {
+    hLog('连接已断开', 'err')
+    document.getElementById('helpStatus').textContent = '❌ 连接断开'
+    document.getElementById('helpStatus').className = 'status-bar status-idle'
+  }
+  helpWs.onerror = () => hLog('连接错误', 'err')
+}
+
+function helpSend(type, payload) {
+  if (!helpWs || helpWs.readyState !== 1) return
+  const msg = { type }
+  if (payload) msg.payload = payload
+  helpWs.send(JSON.stringify(msg))
+  hLog(`→ ${type} ${payload ? JSON.stringify(payload).slice(0,60) : ''}`, 'send')
+}
+
+async function handleHelpMsg(msg) {
+  const { type, payload } = msg
+  switch (type) {
+    case 'CODE_ISSUED':
+      helpRoomId = payload.roomId
+      showHelpCode(payload.code, payload.expiresAt)
+      break
+    case 'ROOM_READY':
+      helpRoomId = payload.roomId
+      showHelpConnected()
+      await startHelpWebRTC()
+      break
+    case 'OFFER':
+      await handleHelpOffer(payload.sdp)
+      break
+    case 'ICE_CANDIDATE':
+      if (helpPc) helpPc.addIceCandidate(new RTCIceCandidate(payload)).catch(()=>{})
+      break
+    case 'REQUEST_CONTROL':
+      showControlRequest()
+      break
+    case 'CONTROL_ACTION':
+      handleControlAction(payload)
+      break
+    case 'CONTROL_REVOKED':
+      helpExitControlled()
+      break
+    case 'PEER_DISCONNECTED':
+      hLog('协助端已断开', 'err')
+      showHelpWaiting()
+      break
+  }
+}
+
+function helpRequestCode() {
+  if (!helpWs || helpWs.readyState !== 1) helpConnect()
+  setTimeout(() => helpSend('REQUEST_CODE'), helpWs.readyState === 1 ? 0 : 500)
+  document.getElementById('helpStatus').textContent = '⏳ 正在获取配对码...'
+  document.getElementById('helpStatus').className = 'status-bar status-connecting'
+}
+
+function showHelpCode(code, expiresAt) {
+  document.getElementById('helpCode').textContent = code.split('').join(' ')
+  document.getElementById('helpStatus').textContent = '⏳ 等待协助端连接'
+  document.getElementById('helpStatus').className = 'status-bar status-connecting'
+  clearInterval(helpTimer)
+  helpTimer = setInterval(() => {
+    const left = expiresAt - Date.now()
+    if (left <= 0) {
+      clearInterval(helpTimer)
+      document.getElementById('helpCountdown').textContent = '配对码已过期，自动刷新...'
+      helpSend('REQUEST_CODE')
+      return
+    }
+    const m = Math.floor(left/60000), s = Math.floor((left%60000)/1000)
+    document.getElementById('helpCountdown').textContent = `有效期：${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+  }, 1000)
+}
+
+function showHelpConnected() {
+  clearInterval(helpTimer)
+  document.getElementById('helpWaiting').style.display = 'none'
+  document.getElementById('helpConnected').style.display = 'block'
+  document.getElementById('helpStatus').textContent = '🟢 协助端已连接 — 指引模式'
+  document.getElementById('helpStatus').className = 'status-bar status-connected'
+  hLog('✅ 连接成功，进入指引模式', 'info')
+}
+
+function showHelpWaiting() {
+  document.getElementById('helpWaiting').style.display = 'block'
+  document.getElementById('helpConnected').style.display = 'none'
+  helpIsControlled = false
+  document.getElementById('btnRevokeControl').style.display = 'none'
+}
+
+// 求助端 WebRTC：等待 Offer（协助端是 initiator）
+async function startHelpWebRTC() {
+  helpPc = new RTCPeerConnection({ iceServers: [
+    { urls: 'stun:stun.miwifi.com:3478' },
+    { urls: 'stun:stun.qq.com:3478' }
+  ]})
+  helpPc.onicecandidate = e => {
+    if (e.candidate) helpSend('ICE_CANDIDATE', e.candidate.toJSON())
+  }
+  helpPc.ontrack = e => {
+    hLog('收到远端媒体流（协助端音视频）', 'info')
+  }
+  helpPc.oniceconnectionstatechange = () => {
+    hLog(`ICE状态: ${helpPc.iceConnectionState}`, 'info')
+  }
+}
+
+async function handleHelpOffer(sdp) {
+  if (!helpPc) await startHelpWebRTC()
+  await helpPc.setRemoteDescription({ type: 'offer', sdp })
+  const answer = await helpPc.createAnswer()
+  await helpPc.setLocalDescription(answer)
+  helpSend('ANSWER', { sdp: answer.sdp, type: 'answer' })
+  hLog('已发送 ANSWER', 'info')
+}
+
+function showControlRequest() {
+  hLog('⚠️ 协助端请求控制', 'info')
+  if (confirm('协助端请求控制您的设备，是否允许？')) {
+    helpSend('CONTROL_RESPONSE', { allowed: true })
+    helpEnterControlled()
+  } else {
+    helpSend('CONTROL_RESPONSE', { allowed: false })
+    hLog('已拒绝控制请求', '')
+  }
+}
+
+function helpEnterControlled() {
+  helpIsControlled = true
+  document.getElementById('helpModeBar').textContent = '🔴 协助端正在控制'
+  document.getElementById('helpModeBar').className = 'status-bar status-controlled'
+  document.getElementById('btnRevokeControl').style.display = 'inline-block'
+  hLog('进入被控制模式', 'info')
+}
+
+function helpExitControlled() {
+  helpIsControlled = false
+  document.getElementById('helpModeBar').textContent = '🟢 指引模式中'
+  document.getElementById('helpModeBar').className = 'status-bar status-connected'
+  document.getElementById('btnRevokeControl').style.display = 'none'
+  hLog('已恢复指引模式', 'info')
+}
+
+function helpRevokeControl() {
+  helpSend('CONTROL_REVOKED')
+  helpExitControlled()
+}
+
+function helpEndSession() {
+  helpSend('END_SESSION')
+  showHelpWaiting()
+  document.getElementById('helpCode').textContent = '- - - -'
+  document.getElementById('helpCountdown').textContent = ''
+}
+
+function handleControlAction(payload) {
+  if (!payload) return
+  const { type, x, y } = payload
+  hLog(`收到控制指令: ${type} x=${x?.toFixed(2)} y=${y?.toFixed(2)}`, 'info')
+  if (type === 'highlight') {
+    showHighlight(x, y)
+  }
+  // tap/swipe/input 在网页端仅记录日志，Android 端才会实际执行
+}
+
+function showHighlight(xRatio, yRatio) {
+  const screen = document.getElementById('helpScreen')
+  const dot = document.getElementById('helpHighlight')
+  const rect = screen.getBoundingClientRect()
+  dot.style.left = (xRatio * 100) + '%'
+  dot.style.top = (yRatio * 100) + '%'
+  dot.style.display = 'block'
+  clearTimeout(dot._timer)
+  dot._timer = setTimeout(() => { dot.style.display = 'none' }, 2000)
+}
+
+// ==================== 协助端 ====================
+let assistWs = null
+let assistRoomId = null
+let assistPc = null
+let assistMode = 'GUIDE' // GUIDE | CONTROL
+
+function assistConnect() {
+  const code = document.getElementById('codeInput').value.trim()
+  if (code.length !== 4) {
+    document.getElementById('assistError').textContent = '请输入 4 位数字'
+    return
+  }
+  document.getElementById('assistError').textContent = ''
+  document.getElementById('btnAssistConnect').disabled = true
+  document.getElementById('btnAssistConnect').textContent = '连接中...'
+
+  assistWs = new WebSocket(WS_URL)
+  assistWs.onopen = () => {
+    aLog('WebSocket 已连接', 'info')
+    assistSend('JOIN_ROOM', { code })
+  }
+  assistWs.onmessage = e => {
+    const msg = JSON.parse(e.data)
+    aLog(`← ${msg.type} ${msg.payload ? JSON.stringify(msg.payload).slice(0,60) : ''}`, 'info')
+    handleAssistMsg(msg)
+  }
+  assistWs.onclose = () => {
+    aLog('连接已断开', 'err')
+    document.getElementById('assistStatus').textContent = '❌ 连接断开'
+    document.getElementById('assistStatus').className = 'status-bar status-idle'
+    document.getElementById('btnAssistConnect').disabled = false
+    document.getElementById('btnAssistConnect').textContent = '连接'
+  }
+  assistWs.onerror = () => aLog('连接错误', 'err')
+}
+
+function assistSend(type, payload) {
+  if (!assistWs || assistWs.readyState !== 1) return
+  const msg = { type }
+  if (payload) msg.payload = payload
+  assistWs.send(JSON.stringify(msg))
+  aLog(`→ ${type} ${payload ? JSON.stringify(payload).slice(0,60) : ''}`, 'send')
+}
+
+async function handleAssistMsg(msg) {
+  const { type, payload } = msg
+  switch (type) {
+    case 'ROOM_READY':
+      assistRoomId = payload.roomId
+      showAssistConnected()
+      await startAssistWebRTC()
+      break
+    case 'ANSWER':
+      if (assistPc) await assistPc.setRemoteDescription({ type: 'answer', sdp: payload.sdp })
+      aLog('已处理 ANSWER', 'info')
+      break
+    case 'ICE_CANDIDATE':
+      if (assistPc) assistPc.addIceCandidate(new RTCIceCandidate(payload)).catch(()=>{})
+      break
+    case 'CONTROL_RESPONSE':
+      document.getElementById('btnRequestControl').disabled = false
+      document.getElementById('btnRequestControl').textContent = '请求控制'
+      if (payload.allowed) {
+        assistEnterControl()
+      } else {
+        aLog('对方拒绝了控制请求', 'err')
+        alert('对方拒绝了控制请求')
+      }
+      break
+    case 'CONTROL_REVOKED':
+      assistExitControl()
+      aLog('对方已收回控制', 'err')
+      alert('对方已收回控制，已切换为指引模式')
+      break
+    case 'PEER_DISCONNECTED':
+      aLog('求助端已断开', 'err')
+      showAssistInput()
+      break
+    case 'ERROR':
+      aLog(`错误: ${payload?.message}`, 'err')
+      document.getElementById('assistError').textContent = payload?.message || '未知错误'
+      document.getElementById('btnAssistConnect').disabled = false
+      document.getElementById('btnAssistConnect').textContent = '连接'
+      break
+  }
+}
+
+function showAssistConnected() {
+  document.getElementById('assistInput').style.display = 'none'
+  document.getElementById('assistSession').style.display = 'block'
+  document.getElementById('assistStatus').textContent = '🟢 已连接求助端'
+  document.getElementById('assistStatus').className = 'status-bar status-connected'
+  aLog('✅ 连接成功，进入指引模式', 'info')
+  setupVideoTouch()
+}
+
+function showAssistInput() {
+  document.getElementById('assistInput').style.display = 'block'
+  document.getElementById('assistSession').style.display = 'none'
+  document.getElementById('assistStatus').textContent = '未连接'
+  document.getElementById('assistStatus').className = 'status-bar status-idle'
+  document.getElementById('btnAssistConnect').disabled = false
+  document.getElementById('btnAssistConnect').textContent = '连接'
+  assistMode = 'GUIDE'
+}
+
+// 协助端 WebRTC：作为 initiator 发 Offer
+async function startAssistWebRTC() {
+  assistPc = new RTCPeerConnection({ iceServers: [
+    { urls: 'stun:stun.miwifi.com:3478' },
+    { urls: 'stun:stun.qq.com:3478' }
+  ]})
+  assistPc.onicecandidate = e => {
+    if (e.candidate) assistSend('ICE_CANDIDATE', e.candidate.toJSON())
+  }
+  assistPc.ontrack = e => {
+    aLog('收到远端视频流', 'info')
+    const video = document.getElementById('assistVideo')
+    video.srcObject = e.streams[0]
+    video.style.display = 'block'
+    document.getElementById('assistNoVideo').style.display = 'none'
+  }
+  assistPc.oniceconnectionstatechange = () => {
+    aLog(`ICE状态: ${assistPc.iceConnectionState}`, 'info')
+    document.getElementById('assistStatus').textContent = `ICE: ${assistPc.iceConnectionState}`
+  }
+  // 添加收发器以接收视频（协助端只接收，不发送屏幕）
+  assistPc.addTransceiver('video', { direction: 'recvonly' })
+  assistPc.addTransceiver('audio', { direction: 'recvonly' })
+  const offer = await assistPc.createOffer()
+  await assistPc.setLocalDescription(offer)
+  assistSend('OFFER', { sdp: offer.sdp, type: 'offer' })
+  aLog('已发送 OFFER', 'info')
+}
+
+function setupVideoTouch() {
+  const wrap = document.getElementById('assistVideoWrap')
+  wrap.addEventListener('click', e => {
+    const rect = wrap.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width
+    const y = (e.clientY - rect.top) / rect.height
+    if (assistMode === 'GUIDE') {
+      assistSend('CONTROL_ACTION', { type: 'highlight', x, y })
+      aLog(`发送高亮: x=${x.toFixed(2)} y=${y.toFixed(2)}`, 'send')
+    } else {
+      assistSend('CONTROL_ACTION', { type: 'tap', x, y })
+      aLog(`发送点击: x=${x.toFixed(2)} y=${y.toFixed(2)}`, 'send')
+    }
+  })
+}
+
+function assistRequestControl() {
+  assistSend('REQUEST_CONTROL')
+  document.getElementById('btnRequestControl').disabled = true
+  document.getElementById('btnRequestControl').textContent = '等待确认...'
+}
+
+function assistEnterControl() {
+  assistMode = 'CONTROL'
+  document.getElementById('assistModeBar').textContent = '🔴 控制模式'
+  document.getElementById('assistModeBar').className = 'status-bar status-controlled'
+  document.getElementById('btnRequestControl').style.display = 'none'
+  document.getElementById('btnStopControl').style.display = 'inline-block'
+  aLog('进入控制模式', 'info')
+}
+
+function assistExitControl() {
+  assistMode = 'GUIDE'
+  document.getElementById('assistModeBar').textContent = '指引模式'
+  document.getElementById('assistModeBar').className = 'status-bar status-connected'
+  document.getElementById('btnRequestControl').style.display = 'inline-block'
+  document.getElementById('btnStopControl').style.display = 'none'
+}
+
+function assistStopControl() {
+  assistSend('CONTROL_REVOKED')
+  assistExitControl()
+}
+
+function assistEndSession() {
+  assistSend('END_SESSION')
+  showAssistInput()
+}
+
+// 手动测试按钮
+function assistSendHighlight() { assistSend('CONTROL_ACTION', { type: 'highlight', x: 0.5, y: 0.3 }) }
+function assistSendTap() { assistSend('CONTROL_ACTION', { type: 'tap', x: 0.5, y: 0.5 }) }
+function assistSendSwipe() { assistSend('CONTROL_ACTION', { type: 'swipe', x1: 0.2, y1: 0.8, x2: 0.8, y2: 0.2, duration: 300 }) }
+function assistSendInput() {
+  const text = document.getElementById('inputText').value
+  if (text) assistSend('CONTROL_ACTION', { type: 'input', text })
+}
+</script>
+</body>
+</html>
