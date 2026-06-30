@@ -1,40 +1,138 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎来到 wbaipm.com</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 60px 40px;
-            max-width: 600px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 { font-size: 36px; color: #333; margin-bottom: 16px; }
-        p { color: #666; line-height: 1.8; font-size: 16px; margin-bottom: 10px; }
-        .domain { color: #667eea; font-weight: bold; font-size: 20px; }
-        .site-status { display: inline-block; background: #52c41a; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px; margin-top: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#dce8e7">
+  <title>Hi 胶布</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="card">
-        <h1>🚀 我的个人网站</h1>
-        <p class="domain">wbaipm.com</p>
-        <p>网站正在建设中，敬请期待！</p>
-        <div class="site-status">✅ 网站已上线</div>
-    </div>
+  <main class="container">
+    <img src="images/Home.jpg" alt="" class="background-image">
+
+    <section class="top-section" aria-label="标题">
+      <img src="images/maxtitle.png" alt="Hi 胶布" class="maxtitle-image">
+      <img src="images/minititle.png" alt="个人网站" class="minititle-image">
+    </section>
+
+    <section class="left-section" aria-label="快捷操作">
+      <button class="image-button info-button" id="info-button" type="button" aria-label="切换背景音乐">
+        <img src="images/info.png" alt="" class="info-image" id="info-image">
+      </button>
+      <button class="image-button wechat-button" id="wechat-button" type="button" aria-label="显示微信二维码">
+        <img src="images/wechat.png" alt="微信" class="wechat-image">
+      </button>
+      <div id="wechat-qrcode-popup" class="qrcode-popup" aria-hidden="true">
+        <img src="images/wechatcode.png" alt="微信二维码" class="qrcode-image">
+      </div>
+    </section>
+
+    <section class="right-section" aria-label="个人信息">
+      <div class="xingxiang-section">
+        <img src="images/name.png" alt="胶布" class="name-image">
+        <img src="images/role.png" alt="角色信息" class="role-image">
+      </div>
+      <a class="email-link" href="mailto:hi@daijiaobu.com" aria-label="发送邮件至 hi@daijiaobu.com">
+        <img src="images/email.png" alt="Email" class="email-image">
+      </a>
+    </section>
+
+    <section class="center-section" aria-label="个人链接">
+      <nav class="list-section">
+        <a class="list-item" href="https://www.yuque.com/hijiaobu" target="_blank" rel="noopener noreferrer" aria-label="语雀">
+          <img src="images/L.png" alt="" class="list-item-L">
+          <span class="list-item-C"></span>
+          <img src="images/R.png" alt="" class="list-item-R">
+          <img src="images/yuque1.png" alt="语雀" class="list-item-image">
+        </a>
+        <a class="list-item" href="https://docs.qq.com/space/DSmhPdWptYVZTb0pX" target="_blank" rel="noopener noreferrer" aria-label="腾讯文档">
+          <img src="images/L.png" alt="" class="list-item-L">
+          <span class="list-item-C"></span>
+          <img src="images/R.png" alt="" class="list-item-R">
+          <img src="images/tengxun1.png" alt="腾讯文档" class="list-item-image">
+        </a>
+        <a class="list-item dark" href="https://github.com/CrazyGoudanli" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <img src="images/zL.png" alt="" class="list-item-L">
+          <span class="list-item-C"></span>
+          <img src="images/zR.png" alt="" class="list-item-R">
+          <img src="images/Github1.png" alt="GitHub" class="list-item-image github-image">
+        </a>
+        <a class="list-item" href="https://space.bilibili.com/1390202" target="_blank" rel="noopener noreferrer" aria-label="哔哩哔哩">
+          <img src="images/L.png" alt="" class="list-item-L">
+          <span class="list-item-C"></span>
+          <img src="images/R.png" alt="" class="list-item-R">
+          <img src="images/bilibili1.png" alt="哔哩哔哩" class="list-item-image bilibili-image">
+        </a>
+      </nav>
+    </section>
+
+    <section class="bottom-section" aria-hidden="true">
+      <img src="images/zuuoxia.png" alt="" class="zuuoxia-image">
+      <img src="images/youxia.png" alt="" class="youxia-image">
+    </section>
+
+    <footer class="icp-footer">
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">冀ICP备17026223号-3</a>
+    </footer>
+  </main>
+
+  <audio id="background-music" loop autoplay>
+    <source src="mp3/Beginning_2.ogg.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const infoButton = document.getElementById('info-button');
+    const infoImage = document.getElementById('info-image');
+    const music = document.getElementById('background-music');
+    const wechatButton = document.getElementById('wechat-button');
+    const qrPopup = document.getElementById('wechat-qrcode-popup');
+    let infoToggled = false;
+
+    music.volume = 0.4;
+    music.play().catch(() => {});
+
+    infoButton.addEventListener('click', () => {
+      infoToggled = !infoToggled;
+      infoImage.src = infoToggled ? 'images/info copy.png' : 'images/info.png';
+      if (infoToggled) music.pause();
+      else music.play().catch(() => {});
+    });
+
+    const setQrVisible = (visible) => {
+      qrPopup.classList.toggle('visible', visible);
+      qrPopup.setAttribute('aria-hidden', String(!visible));
+    };
+
+    wechatButton.addEventListener('mouseenter', () => setQrVisible(true));
+    wechatButton.addEventListener('mouseleave', () => setQrVisible(false));
+    wechatButton.addEventListener('focus', () => setQrVisible(true));
+    wechatButton.addEventListener('blur', () => setQrVisible(false));
+    qrPopup.addEventListener('mouseleave', () => setQrVisible(false));
+  </script>
+
+  <script>
+    window.difyChatbotConfig = {
+      token: 'kE8eab3KKNpQLh6A',
+      inputs: {},
+      systemVariables: {},
+      userVariables: {}
+    };
+  </script>
+  <script
+    src="https://udify.app/embed.min.js"
+    id="kE8eab3KKNpQLh6A"
+    defer>
+  </script>
+  <style>
+    #dify-chatbot-bubble-button {
+      background-color: #1C64F2 !important;
+    }
+
+    #dify-chatbot-bubble-window {
+      width: 24rem !important;
+      height: 40rem !important;
+    }
+  </style>
 </body>
 </html>
