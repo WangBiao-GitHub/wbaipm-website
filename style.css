@@ -256,21 +256,21 @@ body {
 
 .list-item.dark .list-item-C { background-image: url('images/zC.png'); }
 
-.list-item-image {
+.list-item-text {
   position: absolute;
-  height: 8.10vh;
-  width: 10.16vw;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  margin-left: -0.01vw;
-  margin-top: -0.05vh;
-  object-fit: cover;
   pointer-events: none;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: clamp(18px, 2.24vw, 32px);
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: .08em;
+  white-space: nowrap;
 }
 
-.github-image { width: 8.36vw; margin-left: -0.01vw; margin-top: 0.09vh; }
-.bilibili-image { width: 8.20vw; margin-left: -0.01vw; margin-top: 0.09vh; }
+.list-item.dark .list-item-text { color: #fff; }
 
 /* ==================== ICP 备案号 ==================== */
 
@@ -437,15 +437,9 @@ body {
     background-size: 1.2vw 14vw;
   }
 
-  .list-item-image {
-    height: auto;
-    max-height: 40px;
-    width: 28vw;
-    max-width: 110px;
+  .list-item-text {
+    font-size: clamp(14px, 4vw, 20px);
   }
-
-  .github-image { width: 24vw; max-width: 95px; }
-  .bilibili-image { width: 24vw; max-width: 93px; }
 
   .bottom-section {
     position: relative;
