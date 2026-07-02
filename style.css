@@ -37,16 +37,18 @@ body {
   height: 42.04%;
 }
 
-.maxtitle-image {
+.maxtitle-text {
   position: absolute;
-  width: 76.59vw;
-  height: 20.62vh;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  margin-left: -0.41vw;
-  margin-top: -1.23vh;
-  object-fit: cover;
+  margin: 0;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: clamp(32px, 5.56vw, 80px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .06em;
+  white-space: nowrap;
 }
 
 .minititle-image {
@@ -138,13 +140,16 @@ body {
   margin-top: -10.61vh;
 }
 
-.name-image {
+.name-text {
   position: absolute;
-  width: 11.04vw;
-  height: 6.90vh;
   left: 0;
   top: 0;
-  object-fit: cover;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: clamp(22px, 2.86vw, 42px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .06em;
+  white-space: nowrap;
 }
 
 .role-image {
@@ -310,11 +315,8 @@ body {
     min-height: 200px;
   }
 
-  .maxtitle-image {
-    width: 85vw;
-    height: auto;
-    margin-left: 0;
-    margin-top: 0;
+  .maxtitle-text {
+    font-size: clamp(24px, 8vw, 48px);
   }
 
   .minititle-image {
@@ -377,10 +379,9 @@ body {
     align-items: center;
   }
 
-  .name-image {
+  .name-text {
     position: static;
-    width: 35vw;
-    height: auto;
+    font-size: clamp(18px, 6vw, 32px);
   }
 
   .role-image {
