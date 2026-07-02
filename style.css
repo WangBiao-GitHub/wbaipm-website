@@ -5,16 +5,12 @@ html, body { width: 100%; height: 100%; }
 body {
   margin: 0;
   overflow: hidden;
-  min-width: 1080px;
-  min-height: 670px;
 }
 
 .container {
   position: relative;
   width: 100%;
   height: 100vh;
-  min-width: 1280px;
-  min-height: 720px;
   overflow: hidden;
 }
 
@@ -25,8 +21,6 @@ body {
   object-fit: cover;
   object-position: 50% 50%;
   pointer-events: none;
-  min-width: 1280px;
-  min-height: 720px;
   animation: slideBackground 60s linear infinite;
 }
 
@@ -35,45 +29,46 @@ body {
   to { transform: translateX(-20%); }
 }
 
+/* ==================== 顶部标题区 ==================== */
+
 .top-section {
   position: absolute;
   inset: 0 0 auto;
   height: 42.04%;
-  min-height: 302.7px;
 }
 
 .maxtitle-image {
   position: absolute;
-  width: 980.327px;
-  height: 148.434px;
+  width: 76.59vw;
+  height: 20.62vh;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  margin-left: -5.28px;
-  margin-top: -8.87px;
+  margin-left: -0.41vw;
+  margin-top: -1.23vh;
   object-fit: cover;
 }
 
 .minititle-image {
   position: absolute;
-  width: 390.26px;
-  height: 164.004px;
+  width: 30.49vw;
+  height: 22.78vh;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  margin-left: 319.89px;
-  margin-top: 35.7px;
+  margin-left: 24.99vw;
+  margin-top: 4.96vh;
   object-fit: cover;
 }
+
+/* ==================== 左侧按钮区 ==================== */
 
 .left-section {
   position: absolute;
   top: 42.04%;
   left: 0;
   width: 26.67%;
-  min-width: 341.401px;
   height: 48.79%;
-  min-height: 351.3px;
 }
 
 .image-button {
@@ -86,12 +81,12 @@ body {
 }
 
 .info-button {
-  width: 79.381px;
-  height: 77.444px;
-  right: 246.53px;
+  width: 6.20vw;
+  height: 10.76vh;
+  right: 19.26vw;
   top: 50%;
   transform: translateY(-50%);
-  margin-top: 125.27px;
+  margin-top: 17.40vh;
 }
 
 .info-image, .wechat-image {
@@ -102,12 +97,12 @@ body {
 }
 
 .wechat-button {
-  width: 234.915px;
-  height: 77.444px;
+  width: 18.35vw;
+  height: 10.76vh;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  margin-top: 125.27px;
+  margin-top: 17.40vh;
 }
 
 .qrcode-popup {
@@ -116,37 +111,37 @@ body {
   right: 0;
   top: 50%;
   transform: translateY(-100%);
-  margin-top: 70px;
+  margin-top: 9.72vh;
   z-index: 1000;
 }
 
 .qrcode-popup.visible { display: block; }
-.qrcode-image { display: block; width: 234.915px; height: auto; }
+.qrcode-image { display: block; width: 18.35vw; height: auto; }
+
+/* ==================== 右侧个人信息区 ==================== */
 
 .right-section {
   position: absolute;
   top: 42.04%;
   right: -0.11px;
   width: 25.71%;
-  min-width: 329.139px;
   height: 48.79%;
-  min-height: 351.3px;
 }
 
 .xingxiang-section {
   position: absolute;
-  width: 141.336px;
-  height: 285.899px;
-  left: 54.21px;
+  width: 11.04vw;
+  height: 39.71vh;
+  left: 4.24vw;
   top: 50%;
   transform: translateY(-50%);
-  margin-top: -76.41px;
+  margin-top: -10.61vh;
 }
 
 .name-image {
   position: absolute;
-  width: 141.336px;
-  height: 49.694px;
+  width: 11.04vw;
+  height: 6.90vh;
   left: 0;
   top: 0;
   object-fit: cover;
@@ -154,49 +149,52 @@ body {
 
 .role-image {
   position: absolute;
-  width: 110.784px;
-  height: 236.675px;
-  left: 15.17px;
-  top: 53.57px;
+  width: 8.66vw;
+  height: 32.87vh;
+  left: 1.19vw;
+  top: 7.44vh;
   object-fit: cover;
 }
 
 .email-link {
   position: absolute;
-  width: 249.758px;
-  height: 77.444px;
+  width: 19.51vw;
+  height: 10.76vh;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  margin-top: 125.27px;
+  margin-top: 17.40vh;
 }
 
 .email-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ==================== 底部装饰区 ==================== */
 
 .bottom-section {
   position: absolute;
   inset: auto 0 0;
   height: 9.17%;
-  min-height: 66px;
 }
 
 .zuuoxia-image {
   position: absolute;
-  width: 193.611px;
-  height: 40.658px;
-  left: 15.49px;
-  top: 7.74px;
+  width: 15.13vw;
+  height: 5.65vh;
+  left: 1.21vw;
+  top: 1.08vh;
   object-fit: cover;
 }
 
 .youxia-image {
   position: absolute;
-  width: 125.847px;
-  height: 40.658px;
-  right: 15.38px;
-  top: 7.74px;
+  width: 9.83vw;
+  height: 5.65vh;
+  right: 1.20vw;
+  top: 1.08vh;
   object-fit: cover;
 }
+
+/* ==================== 中间导航链接区 ==================== */
 
 .center-section {
   position: absolute;
@@ -204,29 +202,27 @@ body {
   bottom: 9.17%;
   left: 26.67%;
   right: 25.71%;
-  min-width: 609.57px;
-  min-height: 351.3px;
 }
 
 .list-section {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.69vh;
   align-items: center;
   justify-content: flex-end;
   position: absolute;
-  left: 84.54px;
-  right: 96.81px;
+  left: 6.60vw;
+  right: 7.56vw;
   top: 50%;
   transform: translateY(-50%);
-  margin-top: -1.56px;
+  margin-top: -0.22vh;
 }
 
 .list-item {
   position: relative;
   display: block;
   width: 100%;
-  height: 79px;
+  height: 10.97vh;
   flex-shrink: 0;
   transition: transform .3s ease;
   cursor: pointer;
@@ -237,55 +233,257 @@ body {
 
 .list-item-L, .list-item-R {
   position: absolute;
-  height: 79px;
+  height: 10.97vh;
   top: 50%;
   transform: translateY(-50%);
-  width: 8px;
+  width: 0.63vw;
   object-fit: cover;
   pointer-events: none;
 }
 
 .list-item-L { left: 0; }
-.list-item-R { right: .22px; }
+.list-item-R { right: 0.02vw; }
 
 .list-item-C {
   position: absolute;
-  height: 79px;
-  left: 8px;
-  right: 8.22px;
+  height: 10.97vh;
+  left: 0.63vw;
+  right: 0.64vw;
   top: 50%;
   transform: translateY(-50%);
-  background: url('images/C.png') repeat top left / 7.80247px 79px;
+  background: url('images/C.png') repeat top left / 0.61vw 10.97vh;
 }
 
 .list-item.dark .list-item-C { background-image: url('images/zC.png'); }
 
 .list-item-image {
   position: absolute;
-  height: 58.333px;
-  width: 130px;
+  height: 8.10vh;
+  width: 10.16vw;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  margin-left: -.11px;
-  margin-top: -.33px;
+  margin-left: -0.01vw;
+  margin-top: -0.05vh;
   object-fit: cover;
   pointer-events: none;
 }
 
-.github-image { width: 107px; margin-left: -.15px; margin-top: .67px; }
-.bilibili-image { width: 105px; margin-left: -.15px; margin-top: .67px; }
+.github-image { width: 8.36vw; margin-left: -0.01vw; margin-top: 0.09vh; }
+.bilibili-image { width: 8.20vw; margin-left: -0.01vw; margin-top: 0.09vh; }
+
+/* ==================== ICP 备案号 ==================== */
 
 .icp-footer {
   position: absolute;
-  bottom: 20px;
+  bottom: 2.78vh;
   width: 100%;
   text-align: center;
   z-index: 1000;
-  font: 14px/1.4 system-ui, sans-serif;
+  font: clamp(12px, 1.09vw, 14px)/1.4 system-ui, sans-serif;
 }
 
 .icp-footer a { color: #888; text-decoration: none; }
+
+/* ==================== 移动端适配 ==================== */
+
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .container {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .background-image {
+    position: fixed;
+    width: 130%;
+    height: 100%;
+  }
+
+  .top-section {
+    position: relative;
+    height: 30vh;
+    min-height: 200px;
+  }
+
+  .maxtitle-image {
+    width: 85vw;
+    height: auto;
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .minititle-image {
+    width: 40vw;
+    height: auto;
+    margin-left: 28vw;
+    margin-top: 5vh;
+  }
+
+  .left-section {
+    position: relative;
+    top: auto;
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4vw;
+    padding: 10px 0;
+  }
+
+  .info-button,
+  .wechat-button {
+    position: static;
+    transform: none;
+    margin-top: 0;
+  }
+
+  .info-button {
+    width: 12vw;
+    height: auto;
+  }
+
+  .wechat-button {
+    width: 35vw;
+    height: auto;
+  }
+
+  .right-section {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  .xingxiang-section {
+    position: static;
+    transform: none;
+    margin-top: 0;
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .name-image {
+    position: static;
+    width: 35vw;
+    height: auto;
+  }
+
+  .role-image {
+    position: static;
+    width: 28vw;
+    height: auto;
+    margin-top: 5px;
+  }
+
+  .email-link {
+    position: static;
+    transform: none;
+    margin-top: 10px;
+    width: 50vw;
+    height: auto;
+  }
+
+  .center-section {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    padding: 10px 5vw;
+  }
+
+  .list-section {
+    position: static;
+    transform: none;
+    margin-top: 0;
+    left: auto;
+    right: auto;
+    gap: 1vh;
+  }
+
+  .list-item {
+    height: 14vw;
+    max-height: 60px;
+  }
+
+  .list-item-L, .list-item-R {
+    height: 14vw;
+    max-height: 60px;
+    width: 1.5vw;
+    max-width: 6px;
+  }
+
+  .list-item-C {
+    height: 14vw;
+    max-height: 60px;
+    left: 1.5vw;
+    right: 1.7vw;
+    background-size: 1.2vw 14vw;
+  }
+
+  .list-item-image {
+    height: auto;
+    max-height: 40px;
+    width: 28vw;
+    max-width: 110px;
+  }
+
+  .github-image { width: 24vw; max-width: 95px; }
+  .bilibili-image { width: 24vw; max-width: 93px; }
+
+  .bottom-section {
+    position: relative;
+    height: auto;
+    min-height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5vw;
+  }
+
+  .zuuoxia-image, .youxia-image {
+    position: static;
+    width: 30vw;
+    max-width: 150px;
+    height: auto;
+  }
+
+  .qrcode-popup {
+    right: 5vw;
+    top: auto;
+    bottom: 100%;
+    transform: none;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  .qrcode-image { width: 40vw; max-width: 200px; }
+
+  .icp-footer {
+    position: relative;
+    bottom: auto;
+    padding: 15px 0;
+    font-size: 12px;
+  }
+}
+
+/* ==================== 减少动画偏好 ==================== */
 
 @media (prefers-reduced-motion: reduce) {
   .background-image { animation: none; }
